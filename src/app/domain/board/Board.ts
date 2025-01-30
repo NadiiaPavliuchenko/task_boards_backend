@@ -40,7 +40,7 @@ export default class Board {
     if (errors.length > 0) {
       throw new ApiError(400, {
         message: "Validation failed",
-        code: "Board_VALIDATION_ERROR",
+        code: "BOARD_VALIDATION_ERROR",
         errors
       });
     }
@@ -59,7 +59,7 @@ export default class Board {
     if (errors.length > 0) {
       throw new ApiError(400, {
         message: "Validation failed",
-        code: "Board_VALIDATION_ERROR",
+        code: "BOARD_VALIDATION_ERROR",
         errors
       });
     }

@@ -1,6 +1,6 @@
-import { Document, Types } from "mongoose";
+import { Types } from "mongoose";
 
-export interface ICard extends Document {
+export interface ICard {
   boardId: Types.ObjectId;
   title: string;
   description?: string;

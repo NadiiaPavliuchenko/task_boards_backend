@@ -11,6 +11,9 @@ import { ICard, IUpdateCardStatus } from "./Card.types";
 import card from "./Card.model";
 import { ApiResponse } from "../../../helpers/ApiResponse";
 import { ApiError } from "../../../helpers/ApiError";
+import { CreateCard } from "./CreateCard.dto";
+import { validate } from "class-validator";
+import { UpdateStatusCard } from "./UpdateStatusCard.dto";
 
 @JsonController("/card")
 export default class Card {
@@ -29,41 +32,57 @@ export default class Card {
   }
 
   @Post()
-  async createCard(@Body() body: ICard): Promise<ApiResponse<ICard>> {
+  async createCard(@Body() body: CreateCard): Promise<ApiResponse<ICard>> {
+    const errors = await validate(body);
+
+    if (errors.length > 0) {
+      throw new ApiError(400, {
+        message: "Validation failed",
+        code: "CARD_VALIDATION_ERROR",
+        errors
+      });
+    }
     const res = await card.create(body);
     return new ApiResponse(true, res);
   }
+
   @Put("/:id")
   async updateCard(
     @Param("id") id: string,
-    @Body() body: ICard
+    @Body() body: CreateCard
   ): Promise<ApiResponse<ICard>> {
+    const errors = await validate(body);
+
+    if (errors.length > 0) {
+      throw new ApiError(400, {
+        message: "Validation failed",
+        code: "CARD_VALIDATION_ERROR",
+        errors
+      });
+    }
     const res = await card.findOneAndUpdate(
       { _id: id },
       { $set: body },
       { new: true }
     );
-    if (!res) {
-      throw new ApiError(404, {
-        code: "Card NOT FOUND",
-        message: `Card with id ${id} not found`
-      });
-    }
     return new ApiResponse(true, res);
   }
 
   @Patch("/:id")
   async updateCardStatus(
     @Param("id") id: string,
-    @Body() body: IUpdateCardStatus
+    @Body() body: UpdateStatusCard
   ): Promise<ApiResponse<ICard>> {
-    const res = await card.findOneAndUpdate({ _id: id }, body);
-    if (!res) {
-      throw new ApiError(404, {
-        code: "Card NOT FOUND",
-        message: `Card with id ${id} not found`
+    const errors = await validate(body);
+
+    if (errors.length > 0) {
+      throw new ApiError(400, {
+        message: "Validation failed",
+        code: "CARD_VALIDATION_ERROR",
+        errors
       });
     }
+    const res = await card.findOneAndUpdate({ _id: id }, body);
     return new ApiResponse(true, res);
   }
 }
