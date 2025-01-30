@@ -9,11 +9,17 @@
     "lib": ["ES2021"],
     "module": "CommonJS",
     "moduleResolution": "node",
-    "baseUrl": "./src",
-    "outDir": "./dist",
+    // "paths": {
+    //   "types/*": ["./types/*"],
+    //   "app/*": ["./app/*"],
+    //   "infra/*": ["./infra/*"]
+    // },
+    "rootDir": "src",
+    "outDir": "dist",
     "skipLibCheck": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es2019"
-  }
+  },
+  "include": ["src/**/*.ts"]
 }

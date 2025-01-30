@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Tcp } from "./Tcp";
 import dotenv from "dotenv";
-import { IService } from "types/services";
+import { IService } from "../types/services";
 
 dotenv.config();
 
