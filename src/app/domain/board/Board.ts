@@ -10,6 +10,8 @@ import { IBoard } from "./Board.types";
 import board from "./Board.model";
 import { ApiResponse } from "../../../helpers/ApiResponse";
 import { ApiError } from "../../../helpers/ApiError";
+import { validate } from "class-validator";
+import { CreateBoard } from "./CreateBoard.dto";
 
 @JsonController("/board")
 export default class Board {
@@ -32,7 +34,17 @@ export default class Board {
   }
 
   @Post()
-  async createBoard(@Body() body: IBoard): Promise<ApiResponse<IBoard>> {
+  async createBoard(@Body() body: CreateBoard): Promise<ApiResponse<IBoard>> {
+    const errors = await validate(body);
+
+    if (errors.length > 0) {
+      throw new ApiError(400, {
+        message: "Validation failed",
+        code: "Board_VALIDATION_ERROR",
+        errors
+      });
+    }
+
     const res = await board.create(body);
     return new ApiResponse(true, res);
   }
@@ -40,19 +52,22 @@ export default class Board {
   @Put("/:id")
   async updateBoard(
     @Param("id") id: string,
-    @Body() body: IBoard
+    @Body() body: CreateBoard
   ): Promise<ApiResponse<IBoard>> {
+    const errors = await validate(body);
+
+    if (errors.length > 0) {
+      throw new ApiError(400, {
+        message: "Validation failed",
+        code: "Board_VALIDATION_ERROR",
+        errors
+      });
+    }
     const res = await board.findOneAndUpdate(
       { _id: id },
       { $set: body },
       { new: true }
     );
-    if (!res) {
-      throw new ApiError(404, {
-        code: "BOARD NOT FOUND",
-        message: `Board with id ${id} not found`
-      });
-    }
     return new ApiResponse(true, res);
   }
 }

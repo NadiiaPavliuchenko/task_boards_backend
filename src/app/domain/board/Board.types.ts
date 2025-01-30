@@ -1,6 +1,4 @@
-import { Document } from "mongoose";
-
-export interface IBoard extends Document {
+export interface IBoard {
   name: string;
   hashedId: string;
 }
