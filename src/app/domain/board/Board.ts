@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Body,
   Param
 } from "routing-controllers";
@@ -70,6 +71,18 @@ export default class Board {
       { $set: body },
       { new: true }
     );
+    return new ApiResponse(true, res.toObject());
+  }
+
+  @Delete("/:id")
+  async deleteBoard(@Param("id") id: string): Promise<ApiResponse<IBoard>> {
+    const res = await board.findOneAndDelete({ _id: id });
+    if (!res) {
+      throw new ApiError(404, {
+        code: "BOARD_NOT_FOUND",
+        message: `Board with id ${id} not found`
+      });
+    }
     return new ApiResponse(true, res.toObject());
   }
 }

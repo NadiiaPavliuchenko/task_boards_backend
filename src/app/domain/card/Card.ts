@@ -5,7 +5,8 @@ import {
   Put,
   Patch,
   Body,
-  Param
+  Param,
+  Delete
 } from "routing-controllers";
 import { ICard } from "./Card.types";
 import card from "./Card.model";
@@ -83,6 +84,18 @@ export default class Card {
       });
     }
     const res = await card.findOneAndUpdate({ _id: id }, body);
+    return new ApiResponse(true, res.toObject());
+  }
+
+  @Delete("/:id")
+  async deleteBoard(@Param("id") id: string): Promise<ApiResponse<ICard>> {
+    const res = await card.findOneAndDelete({ _id: id });
+    if (!res) {
+      throw new ApiError(404, {
+        code: "CARD_NOT_FOUND",
+        message: `Card with id ${id} not found`
+      });
+    }
     return new ApiResponse(true, res.toObject());
   }
 }
