@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ConnectOptions } from "mongoose";
 import { Tcp } from "./Tcp";
 import dotenv from "dotenv";
 import { IService } from "../types/services";
@@ -39,8 +39,8 @@ export class App implements IService {
     try {
       await mongoose.connect(dbUri, {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
-      } as any);
+        useUnifiedTopology: true
+      } as ConnectOptions);
       console.log("MongoDB connected successfully");
     } catch (error) {
       console.error("MongoDB connection error:", error);
