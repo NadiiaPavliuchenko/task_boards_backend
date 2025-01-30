@@ -7,3 +7,8 @@ export interface ICard extends Document {
   status: "ToDo" | "In Progress" | "Done";
   order: number;
 }
+
+type CardStatus = "ToDo" | "In Progress" | "Done";
+export interface IUpdateCardStatus {
+  status: CardStatus;
+}

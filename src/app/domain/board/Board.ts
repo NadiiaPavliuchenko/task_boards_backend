@@ -24,7 +24,7 @@ export default class Board {
     const res = await board.findOne({ _id: id });
     if (!res) {
       throw new ApiError(404, {
-        code: "BOARD NOT FOUND",
+        code: "BOARD_NOT_FOUND",
         message: `Board with id ${id} not found`
       });
     }
@@ -53,6 +53,6 @@ export default class Board {
         message: `Board with id ${id} not found`
       });
     }
-    return res;
+    return new ApiResponse(true, res);
   }
 }
