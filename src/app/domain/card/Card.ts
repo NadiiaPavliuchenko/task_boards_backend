@@ -7,7 +7,7 @@ import {
   Body,
   Param
 } from "routing-controllers";
-import { ICard, IUpdateCardStatus } from "./Card.types";
+import { ICard } from "./Card.types";
 import card from "./Card.model";
 import { ApiResponse } from "../../../helpers/ApiResponse";
 import { ApiError } from "../../../helpers/ApiError";
@@ -43,7 +43,7 @@ export default class Card {
       });
     }
     const res = await card.create(body);
-    return new ApiResponse(true, res);
+    return new ApiResponse(true, res.toObject());
   }
 
   @Put("/:id")
@@ -65,7 +65,7 @@ export default class Card {
       { $set: body },
       { new: true }
     );
-    return new ApiResponse(true, res);
+    return new ApiResponse(true, res.toObject());
   }
 
   @Patch("/:id")
@@ -83,6 +83,6 @@ export default class Card {
       });
     }
     const res = await card.findOneAndUpdate({ _id: id }, body);
-    return new ApiResponse(true, res);
+    return new ApiResponse(true, res.toObject());
   }
 }

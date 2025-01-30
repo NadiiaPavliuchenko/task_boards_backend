@@ -18,12 +18,14 @@ export default class Board {
   @Get()
   async getAll(): Promise<ApiResponse<IBoard[]>> {
     const res = await board.find({});
-    return new ApiResponse(true, res);
+    const cleanedDocuments = res.map((doc) => doc._doc);
+    return new ApiResponse(true, cleanedDocuments);
   }
 
   @Get("/:id")
   async getOne(@Param("id") id: string): Promise<ApiResponse<IBoard | object>> {
-    const res = await board.findOne({ _id: id });
+    const res = await board.findById(id);
+
     if (!res) {
       throw new ApiError(404, {
         code: "BOARD_NOT_FOUND",
@@ -46,7 +48,7 @@ export default class Board {
     }
 
     const res = await board.create(body);
-    return new ApiResponse(true, res);
+    return new ApiResponse(true, res.toObject());
   }
 
   @Put("/:id")
@@ -68,6 +70,6 @@ export default class Board {
       { $set: body },
       { new: true }
     );
-    return new ApiResponse(true, res);
+    return new ApiResponse(true, res.toObject());
   }
 }
