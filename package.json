@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node -r tsconfig-paths/register ./dist/main.js",
     "dev": "nodemon",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
@@ -19,11 +22,20 @@
     "routing-controllers": "^0.10.4"
   },
   "devDependencies": {
+    "@eslint/js": "^9.19.0",
     "@types/express": "^5.0.0",
     "@types/node": "^22.12.0",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
+    "eslint": "^9.19.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^15.14.0",
     "nodemon": "^3.1.9",
+    "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.22.0"
   }
 }
