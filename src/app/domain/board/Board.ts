@@ -19,7 +19,7 @@ import { formatDocuments } from "../../../helpers/FormatDocuments";
 export default class Board {
   @Get()
   async getAll(): Promise<ApiResponse<IBoard[]>> {
-    const res = await board.find({});
+    const res = await board.find({}).sort({ _id: -1 });
     return new ApiResponse(true, formatDocuments(res.map((doc) => doc._doc)));
   }
 
