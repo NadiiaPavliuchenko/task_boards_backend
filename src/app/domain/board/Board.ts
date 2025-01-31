@@ -13,19 +13,19 @@ import { ApiResponse } from "../../../helpers/ApiResponse";
 import { ApiError } from "../../../helpers/ApiError";
 import { validate } from "class-validator";
 import { CreateBoard } from "./CreateBoard.dto";
+import { formatDocuments } from "../../../helpers/FormatDocuments";
 
 @JsonController("/board")
 export default class Board {
   @Get()
   async getAll(): Promise<ApiResponse<IBoard[]>> {
     const res = await board.find({});
-    const cleanedDocuments = res.map((doc) => doc._doc);
-    return new ApiResponse(true, cleanedDocuments);
+    return new ApiResponse(true, formatDocuments(res.map((doc) => doc._doc)));
   }
 
   @Get("/:id")
   async getOne(@Param("id") id: string): Promise<ApiResponse<IBoard | object>> {
-    const res = await board.findById(id);
+    const res = await board.findOne({ hashedId: id });
 
     if (!res) {
       throw new ApiError(404, {
@@ -33,7 +33,7 @@ export default class Board {
         message: `Board with id ${id} not found`
       });
     }
-    return new ApiResponse(true, res);
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 
   @Post()
@@ -49,7 +49,7 @@ export default class Board {
     }
 
     const res = await board.create(body);
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 
   @Put("/:id")
@@ -71,7 +71,7 @@ export default class Board {
       { $set: body },
       { new: true }
     );
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 
   @Delete("/:id")
@@ -83,6 +83,6 @@ export default class Board {
         message: `Board with id ${id} not found`
       });
     }
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 }

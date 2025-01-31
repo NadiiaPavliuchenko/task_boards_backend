@@ -15,6 +15,7 @@ import { ApiError } from "../../../helpers/ApiError";
 import { CreateCard } from "./CreateCard.dto";
 import { validate } from "class-validator";
 import { UpdateStatusCard } from "./UpdateStatusCard.dto";
+import { formatDocuments } from "../../../helpers/FormatDocuments";
 
 @JsonController("/card")
 export default class Card {
@@ -26,10 +27,15 @@ export default class Card {
     if (!res) {
       throw new ApiError(404, {
         code: "CARDS_NOT_FOUND",
-        message: `Cards with dord id ${boardId} not found`
+        message: `Cards with board id ${boardId} not found`
       });
     }
-    return new ApiResponse(true, res);
+
+    const formatted = formatDocuments(res.map((doc) => doc._doc));
+    return new ApiResponse(
+      true,
+      formatted.length === 1 ? formatted[0] : formatted
+    );
   }
 
   @Post()
@@ -44,7 +50,7 @@ export default class Card {
       });
     }
     const res = await card.create(body);
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 
   @Put("/:id")
@@ -66,7 +72,7 @@ export default class Card {
       { $set: body },
       { new: true }
     );
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 
   @Patch("/:id")
@@ -84,7 +90,7 @@ export default class Card {
       });
     }
     const res = await card.findOneAndUpdate({ _id: id }, body);
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 
   @Delete("/:id")
@@ -96,6 +102,6 @@ export default class Card {
         message: `Card with id ${id} not found`
       });
     }
-    return new ApiResponse(true, res.toObject());
+    return new ApiResponse(true, formatDocuments(res._doc));
   }
 }
