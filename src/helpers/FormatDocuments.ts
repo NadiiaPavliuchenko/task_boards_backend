@@ -7,7 +7,7 @@ export function formatDocuments<T extends { _id: any; boardId?: any }>(
     return data.map((doc) => ({
       ...doc,
       _id: doc._id.toString(),
-      ...(doc.boardId && { boardId: doc.boardId.toString() }) // Перетворюємо boardId, якщо він є
+      ...(doc.boardId && { boardId: doc.boardId.toString() })
     }));
   } else {
     return {

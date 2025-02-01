@@ -16,6 +16,7 @@ import { CreateCard } from "./CreateCard.dto";
 import { validate } from "class-validator";
 import { UpdateStatusCard } from "./UpdateStatusCard.dto";
 import { formatDocuments } from "../../../helpers/FormatDocuments";
+// import mongoose from "mongoose";
 
 @JsonController("/card")
 export default class Card {
@@ -58,7 +59,17 @@ export default class Card {
     @Param("id") id: string,
     @Body() body: CreateCard
   ): Promise<ApiResponse<ICard>> {
-    const errors = await validate(body);
+    const { boardId, title, description, status, order } = body;
+
+    const data = {
+      boardId,
+      title,
+      description,
+      status,
+      order
+    };
+
+    const errors = await validate(data);
 
     if (errors.length > 0) {
       throw new ApiError(400, {
@@ -69,7 +80,7 @@ export default class Card {
     }
     const res = await card.findOneAndUpdate(
       { _id: id },
-      { $set: body },
+      { $set: data },
       { new: true }
     );
     return new ApiResponse(true, formatDocuments(res._doc));
@@ -95,13 +106,23 @@ export default class Card {
 
   @Delete("/:id")
   async deleteBoard(@Param("id") id: string): Promise<ApiResponse<ICard>> {
-    const res = await card.findOneAndDelete({ _id: id });
-    if (!res) {
+    const cardToDelete = await card.findOne({ _id: id });
+
+    if (!cardToDelete) {
       throw new ApiError(404, {
         code: "CARD_NOT_FOUND",
         message: `Card with id ${id} not found`
       });
     }
+
+    const { boardId, status, order } = cardToDelete;
+
+    const res = await card.findOneAndDelete({ _id: id });
+
+    await card.updateMany(
+      { boardId, status, order: { $gt: order } },
+      { $inc: { order: -1 } }
+    );
     return new ApiResponse(true, formatDocuments(res._doc));
   }
 }

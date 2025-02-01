@@ -6,11 +6,6 @@ const BoardSchema = new mongoose.Schema<IBoard>(
     name: {
       type: String,
       required: true
-    },
-    hashedId: {
-      type: String,
-      unique: true,
-      required: true
     }
   },
   { versionKey: false }

@@ -25,7 +25,7 @@ export default class Board {
 
   @Get("/:id")
   async getOne(@Param("id") id: string): Promise<ApiResponse<IBoard | object>> {
-    const res = await board.findOne({ hashedId: id });
+    const res = await board.findOne({ _id: id });
 
     if (!res) {
       throw new ApiError(404, {
