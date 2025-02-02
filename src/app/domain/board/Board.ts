@@ -101,13 +101,13 @@ export default class Board {
     const { cardId, fromColumnId, toColumnId } = body;
 
     await board.updateOne(
-      { _id: boardId, "columns._id": fromColumnId },
-      { $pull: { "columns.$.cards": cardId } }
+      { _id: boardId },
+      { $pull: { [`${fromColumnId}`]: cardId } }
     );
 
     await board.updateOne(
-      { _id: boardId, "columns._id": toColumnId },
-      { $push: { "columns.$.cards": cardId } }
+      { _id: boardId },
+      { $push: { [`${toColumnId}`]: cardId } }
     );
 
     const updatedBoard = await board.findById(boardId);
@@ -130,8 +130,8 @@ export default class Board {
       });
     }
     const res = await board.findOneAndUpdate(
-      { _id: boardId, "columns._id": columnId },
-      { $set: { "columns.$.cards": body.cards } },
+      { _id: boardId },
+      { $set: { [`${columnId}`]: body.cards } },
       { new: true }
     );
 

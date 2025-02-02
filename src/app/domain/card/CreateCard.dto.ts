@@ -1,7 +1,11 @@
-import { Length, IsOptional } from "class-validator";
-import type { ICard } from "./Card.types";
+import { Length, IsOptional, IsMongoId } from "class-validator";
+import type { ICreateCard } from "./Card.types";
+import { Types } from "mongoose";
 
-export class CreateCard implements Omit<ICard, "_id"> {
+export class CreateCard implements Omit<ICreateCard, "_id"> {
+  @IsMongoId()
+  boardId: Types.ObjectId;
+
   @Length(2, 20)
   title: string;
 
