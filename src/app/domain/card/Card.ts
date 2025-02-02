@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Put,
-  Patch,
   Body,
   Param,
   Delete
@@ -14,21 +13,19 @@ import { ApiResponse } from "../../../helpers/ApiResponse";
 import { ApiError } from "../../../helpers/ApiError";
 import { CreateCard } from "./CreateCard.dto";
 import { validate } from "class-validator";
-import { UpdateStatusCard } from "./UpdateStatusCard.dto";
 import { formatDocuments } from "../../../helpers/FormatDocuments";
-// import mongoose from "mongoose";
 
 @JsonController("/card")
 export default class Card {
-  @Get("/:boardId")
+  @Get("/:id")
   async getCards(
-    @Param("boardId") boardId: string
+    @Param("id") id: string
   ): Promise<ApiResponse<ICard | object>> {
-    const res = await card.find({ boardId });
+    const res = await card.find({ _id: id });
     if (!res) {
       throw new ApiError(404, {
         code: "CARDS_NOT_FOUND",
-        message: `Cards with board id ${boardId} not found`
+        message: `Cards with board id ${id} not found`
       });
     }
 
@@ -59,14 +56,11 @@ export default class Card {
     @Param("id") id: string,
     @Body() body: CreateCard
   ): Promise<ApiResponse<ICard>> {
-    const { boardId, title, description, status, order } = body;
+    const { title, description } = body;
 
     const data = {
-      boardId,
       title,
-      description,
-      status,
-      order
+      description
     };
 
     const errors = await validate(data);
@@ -86,24 +80,6 @@ export default class Card {
     return new ApiResponse(true, formatDocuments(res._doc));
   }
 
-  @Patch("/:id")
-  async updateCardStatus(
-    @Param("id") id: string,
-    @Body() body: UpdateStatusCard
-  ): Promise<ApiResponse<ICard>> {
-    const errors = await validate(body);
-
-    if (errors.length > 0) {
-      throw new ApiError(400, {
-        message: "Validation failed",
-        code: "CARD_VALIDATION_ERROR",
-        errors
-      });
-    }
-    const res = await card.findOneAndUpdate({ _id: id }, body);
-    return new ApiResponse(true, formatDocuments(res._doc));
-  }
-
   @Delete("/:id")
   async deleteBoard(@Param("id") id: string): Promise<ApiResponse<ICard>> {
     const cardToDelete = await card.findOne({ _id: id });
@@ -115,14 +91,8 @@ export default class Card {
       });
     }
 
-    const { boardId, status, order } = cardToDelete;
-
     const res = await card.findOneAndDelete({ _id: id });
 
-    await card.updateMany(
-      { boardId, status, order: { $gt: order } },
-      { $inc: { order: -1 } }
-    );
     return new ApiResponse(true, formatDocuments(res._doc));
   }
 }
