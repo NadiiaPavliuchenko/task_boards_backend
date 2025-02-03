@@ -1,9 +1,9 @@
 export function formatDocuments<
   T extends {
-    _id: any;
-    todo?: any[];
-    inProgress?: any[];
-    done?: any[];
+    _id: string;
+    todo?: string[];
+    inProgress?: string[];
+    done?: string[];
   }
 >(
   data: T | T[]

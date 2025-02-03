@@ -9,11 +9,6 @@
     "lib": ["ES2021"],
     "module": "CommonJS",
     "moduleResolution": "node",
-    // "paths": {
-    //   "types/*": ["./types/*"],
-    //   "app/*": ["./app/*"],
-    //   "infra/*": ["./infra/*"]
-    // },
     "rootDir": "src",
     "outDir": "dist",
     "skipLibCheck": true,
