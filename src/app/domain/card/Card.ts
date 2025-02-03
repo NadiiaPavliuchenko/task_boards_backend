@@ -26,7 +26,7 @@ export default class Card {
     if (!res) {
       throw new ApiError(404, {
         code: "CARDS_NOT_FOUND",
-        message: `Cards with board id ${id} not found`
+        message: `Cards with ids ${id} not found`
       });
     }
 

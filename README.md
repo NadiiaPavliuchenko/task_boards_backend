@@ -9,6 +9,7 @@ This API is deployed on [Render](https://render.com/).
 - Create, Read, Update, Delete (CRUD) boards.
 - Manage cards: Add, update, and delete cards.
 - Card status management: Update card statuses ("To Do", "In Progress", "Done").
+- Change cards order in a column.
 
 ## Technologies Used
 
@@ -47,14 +48,17 @@ The server will run on `http://localhost:4000`.
 
 **Boards**
 
-- GET /boards: Get all boards.
-- POST /boards: Create a new board.
-- PUT /boards/:id: Update a board by ID.
-- DELETE /boards/:id: Delete a board by ID.
+- GET /board: Get all boards.
+- GET /board/:id: Get board by id.
+- POST /board: Create a new board.
+- PATCH /board/:id: Update board name by ID.
+- PATCH /board/:boardId/move-card: change cards order in a column.
+- PATCH /board/:boardId/columns/:columnId: move card between columns.
+- DELETE /board/:id: Delete a board by ID.
 
 **Cards**
 
-- GET /boards/:boardId/cards: Get all cards in a specific board.
-- POST /boards/:boardId/cards: Add a new card to a board.
-- PUT /cards/:id: Update a card by ID.
-- DELETE /cards/:id: Delete a card by ID.
+- GET /card/:id: Get cards by ID.
+- POST /card: Add a new card.
+- PUT /card/:id: Update a card by ID.
+- DELETE /card/:id/board/:boardId: Delete a card by ID and board ID.

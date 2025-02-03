@@ -15,6 +15,7 @@ import { validate } from "class-validator";
 import { CreateBoard, UpdateBoard } from "./CreateBoard.dto";
 import { formatDocuments } from "../../../helpers/FormatDocuments";
 import { ObjectId } from "mongoose";
+import card from "../card/Card.model";
 
 @JsonController("/board")
 export default class Board {
@@ -140,13 +141,35 @@ export default class Board {
 
   @Delete("/:id")
   async deleteBoard(@Param("id") id: string): Promise<ApiResponse<IBoard>> {
+    const boardToDelete = await board.findOne({ _id: id });
+
+    if (!boardToDelete) {
+      throw new ApiError(404, {
+        code: "BOARD_NOT_FOUND",
+        message: `Board with id ${id} not found`
+      });
+    }
+
+    const allCardIds = [
+      ...boardToDelete.todo,
+      ...boardToDelete.inProgress,
+      ...boardToDelete.done
+    ]
+      .map((card) => (card.$oid ? card.$oid.toString() : null))
+      .filter((cardId) => cardId !== null);
+    await card.deleteMany({
+      _id: { $in: allCardIds }
+    });
+
     const res = await board.findOneAndDelete({ _id: id });
+
     if (!res) {
       throw new ApiError(404, {
         code: "BOARD_NOT_FOUND",
         message: `Board with id ${id} not found`
       });
     }
+
     return new ApiResponse(true, formatDocuments(res._doc));
   }
 }
